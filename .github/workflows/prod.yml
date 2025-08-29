@@ -1,0 +1,24 @@
+name: Hello World CI
+
+on:
+  push:
+    branches:
+      - prod
+
+build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t cv:latest .
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker tag cv:latest ${{ secrets.DOCKER_HUB_USERNAME }}/cv:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cv:latest
